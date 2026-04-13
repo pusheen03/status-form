@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TelcoScore L1 Daily Status Checker</title>
+  <link rel="stylesheet" href="telcoscore_l1_status_v2.css" />
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Status Report</h1>
+  <p>Fill all sections and generate email on outlook</p>
+</div>
+
+<div class="app">
+
+  <div class="meta">
+    <div class="field">
+      <label class="lbl">Date</label>
+      <input type="text" id="rdate" />
+    </div>
+    <div class="field">
+      <label class="lbl">Time</label>
+      <input type="text" id="rtime" placeholder="e.g. 08:00 PHT" />
+    </div>
+  </div>
+
+  <!-- RECIPIENT GUIDE -->
+  <div class="recipient-guide">
+    <div class="rg-item rg-platform">
+      <div class="rg-dot"></div>
+      <div>
+        <div class="rg-label">Platform Team</div>
+        <div class="rg-section">Airflow Jobs</div>
+      </div>
+    </div>
+    <div class="rg-item rg-infra">
+      <div class="rg-dot"></div>
+      <div>
+        <div class="rg-label">Infrastructure Team</div>
+        <div class="rg-section">Database (DB)</div>
+      </div>
+    </div>
+    <div class="rg-item rg-wakanda">
+      <div class="rg-dot"></div>
+      <div>
+        <div class="rg-label">Wakanda / Partners</div>
+        <div class="rg-section">Gateway + Partner Observations</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════ -->
+  <!--  PLATFORM — Airflow                -->
+  <!-- ═══════════════════════════════════ -->
+  <div class="block-label block-platform">Platform Team — Airflow Jobs</div>
+
+  <div class="sec">
+    <div class="sec-hdr hdr-platform">
+      <div class="sec-title">Airflow Jobs — EDS Data Pipeline</div>
+    </div>
+    <div class="sec-body">
+
+      <div class="qrow">
+        <div class="qlabel"><strong>1.</strong> Are all Airflow jobs (staging task &amp; extract task) completing successfully?</div>
+        <div class="radio-group">
+          <label><input type="radio" name="af1" value="ok|All jobs completed successfully" checked> All Completed</label>
+          <label><input type="radio" name="af1" value="err|One or more jobs FAILED"> Job(s) Failed</label>
+          <label><input type="radio" name="af1" value="warn|Jobs delayed / pending"> Delayed/Pending</label>
+        </div>
+        <div class="detail-row" id="af1-d">
+          <textarea rows="2" id="af1-t" placeholder="Which DAG/task failed? Error message? (e.g. DAG 'etl_zze_mynt' — task 'extract_task': S3 connection timeout)"></textarea>
+          <span class="hint">Check Airflow UI → failed tasks → view logs.</span>
+        </div>
+      </div>
+
+      <div class="qrow">
+        <div class="qlabel"><strong>2.</strong> Was data successfully pushed to S3 Extract path <code>s3://s3-prd-edo-data-olyp/e1/data/zze_telcoscore/</code>?</div>
+        <div class="radio-group">
+          <label><input type="radio" name="af2" value="ok|Data present in S3 Extract" checked> Data Present</label>
+          <label><input type="radio" name="af2" value="err|Data missing or incomplete in S3 Extract"> Missing/incomplete</label>
+          <label><input type="radio" name="af2" value="na|Not yet verified"> Not checked</label>
+        </div>
+        <div class="detail-row" id="af2-d">
+          <textarea rows="2" id="af2-t" placeholder="What is missing? Last successful run timestamp?"></textarea>
+        </div>
+      </div>
+
+      <div class="qrow">
+        <div class="qlabel"><strong>3.</strong> Any EDS API quota/rate-limit alerts? (Limit: 30 req/s · 50 burst · 1.2M/day)</div>
+        <div class="radio-group">
+          <label><input type="radio" name="af3" value="ok|No quota alerts" checked> No alerts</label>
+          <label><input type="radio" name="af3" value="err|Quota limit approaching or exceeded"> Quota issue</label>
+        </div>
+        <div class="detail-row" id="af3-d">
+          <textarea rows="2" id="af3-t" placeholder="Which API? Current usage vs limit? Time of alert?"></textarea>
+        </div>
+      </div>
+
+      <div class="screenshot-row">
+        <div class="screenshot-row-left">
+          <strong>Screenshot</strong>
+          <span>Attach screenshot if failure or delay exists.</span>
+        </div>
+        <div class="screenshot-toggle">
+          <button id="af-ss-no" class="active" onclick="toggleSS('af','no')">No screenshot</button>
+          <button id="af-ss-yes" onclick="toggleSS('af','yes')">Has screenshot</button>
+        </div>
+      </div>
+      <input type="hidden" id="af-screenshot" value="no" />
+
+    </div>
+  </div>
+
+  <div class="send-block send-block-platform">
+    <div class="send-info">
+      <span class="send-to-label">Recipient:</span>
+      <span class="send-to-val">Platform Team</span>
+    </div>
+    <div class="send-actions">
+      <button class="btn-send btn-platform" onclick="openOutlook('platform')">Open in Outlook</button>
+      <button class="btn-copy-sm btn-platform-copy" onclick="copyEmail('platform')">Copy Email</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════ -->
+  <!--  INFRASTRUCTURE — Database         -->
+  <!-- ═══════════════════════════════════ -->
+  <div class="block-label block-infra">Infrastructure Team — Database</div>
+
+  <div class="sec">
+    <div class="sec-hdr hdr-infra">
+      <div class="sec-title">Database (DB) — Monitor Site</div>
+    </div>
+    <div class="sec-body">
+
+      <div class="qrow">
+        <div class="qlabel"><strong>1.</strong> ADH Batch 1</div>
+        <div class="radio-group">
+          <label><input type="radio" name="db1" value="sched|Scheduled" checked> Scheduled</label>
+          <label><input type="radio" name="db1" value="prog|In-Progress"> In-Progress</label>
+          <label><input type="radio" name="db1" value="ok|Completed"> Completed</label>
+        </div>
+        <div class="detail-row" id="db1-d">
+          <textarea rows="2" id="db1-t" placeholder="Additional notes for ADH Batch 1 (e.g. delayed, error encountered)"></textarea>
+        </div>
+      </div>
+
+      <div class="qrow">
+        <div class="qlabel"><strong>2.</strong> IN Summary</div>
+        <div class="radio-group">
+          <label><input type="radio" name="db2" value="sched|Scheduled" checked> Scheduled</label>
+          <label><input type="radio" name="db2" value="prog|In-Progress"> In-Progress</label>
+          <label><input type="radio" name="db2" value="ok|Completed"> Completed</label>
+        </div>
+        <div class="detail-row" id="db2-d">
+          <textarea rows="2" id="db2-t" placeholder="Additional notes for IN Summary"></textarea>
+        </div>
+      </div>
+
+      <div class="qrow">
+        <div class="qlabel"><strong>3.</strong> New Delphi</div>
+        <div class="radio-group">
+          <label><input type="radio" name="db3" value="sched|Scheduled" checked> Scheduled</label>
+          <label><input type="radio" name="db3" value="prog|In-Progress"> In-Progress</label>
+          <label><input type="radio" name="db3" value="ok|Completed"> Completed</label>
+        </div>
+        <div class="detail-row" id="db3-d">
+          <textarea rows="2" id="db3-t" placeholder="Additional notes for New Delphi"></textarea>
+        </div>
+      </div>
+
+      <div class="qrow">
+        <div class="qlabel"><strong>4.</strong> CWN Status</div>
+        <div class="radio-group">
+          <label><input type="radio" name="db4" value="sched|Scheduled" checked> Scheduled</label>
+          <label><input type="radio" name="db4" value="prog|In-Progress"> In-Progress</label>
+          <label><input type="radio" name="db4" value="ok|Completed"> Completed</label>
+        </div>
+        <div class="detail-row" id="db4-d">
+          <textarea rows="2" id="db4-t" placeholder="Additional notes for CWN Status"></textarea>
+        </div>
+      </div>
+
+      <div class="qrow">
+        <div class="qlabel"><strong>5.</strong> Kafka and ADH CDC health check</div>
+        <div class="radio-group">
+          <label><input type="radio" name="db5" value="ok|No Alerts" checked> No Alerts</label>
+          <label><input type="radio" name="db5" value="err|With Alert"> With Alert</label>
+        </div>
+        <div class="detail-row" id="db5-d">
+          <textarea rows="2" id="db5-t" placeholder="Describe the alert — which topic/consumer group? Error message?"></textarea>
+        </div>
+      </div>
+
+      <div class="qrow">
+        <div class="qlabel"><strong>6.</strong> Snowflake External Table Refresh Status</div>
+        <div class="radio-group">
+          <label><input type="radio" name="db6" value="ok|Successful" checked> Successful</label>
+          <label><input type="radio" name="db6" value="err|Failed"> Failed</label>
+        </div>
+        <div class="detail-row" id="db6-d">
+          <textarea rows="2" id="db6-t" placeholder="Which table(s) failed to refresh? Error message or time of failure?"></textarea>
+        </div>
+      </div>
+
+      <div class="screenshot-row">
+        <div class="screenshot-row-left">
+          <strong>Screenshot</strong>
+          <span>Attach screenshot if any item has issues.</span>
+        </div>
+        <div class="screenshot-toggle">
+          <button id="db-ss-no" class="active" onclick="toggleSS('db','no')">No screenshot</button>
+          <button id="db-ss-yes" onclick="toggleSS('db','yes')">Has screenshot</button>
+        </div>
+      </div>
+      <input type="hidden" id="db-screenshot" value="no" />
+
+    </div>
+  </div>
+
+  <!-- DB send block — GChat only -->
+  <div class="send-block send-block-infra">
+    <div class="send-info">
+      <span class="send-to-label">Send via:</span>
+      <span class="send-to-val">💬 Google Chat — Infrastructure Team</span>
+    </div>
+    <div class="send-actions">
+      <button class="btn-send btn-infra btn-gchat" id="gchat-send-btn" onclick="sendToGChat()">
+        <span class="gchat-icon">💬</span> Send to GChat
+      </button>
+      <span class="copy-ok-inline" id="infra-copy-ok"></span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════ -->
+  <!--  WAKANDA — Gateway + Partner Obs   -->
+  <!-- ═══════════════════════════════════ -->
+  <div class="block-label block-wakanda">Wakanda / Partners — Gateway &amp; Observations</div>
+
+  <div class="sec">
+    <div class="sec-hdr hdr-wakanda">
+      <div class="sec-title">Gateway — API Gateway Availability</div>
+    </div>
+    <div class="sec-body">
+
+      <div class="qrow">
+        <div class="qlabel"><strong>1.</strong> Is the API Gateway (LB with 2 EC2) currently UP and serving requests?</div>
+        <div class="radio-group">
+          <label><input type="radio" name="gw1" value="ok|Gateway is UP — both EC2 healthy" checked> UP (both EC2 healthy)</label>
+          <label><input type="radio" name="gw1" value="err|Gateway DOWN"> DOWN</label>
+          <label><input type="radio" name="gw1" value="warn|Intermittent — one EC2 unhealthy"> Intermittent</label>
+        </div>
+        <div class="detail-row" id="gw1-d">
+          <textarea rows="2" id="gw1-t" placeholder="Which EC2 is unhealthy? Since when? Any error in logs?"></textarea>
+        </div>
+      </div>
+
+      <div class="qrow">
+        <div class="qlabel"><strong>2.</strong> Is the Authentication Token for Apigee connections valid and <span class="warn">NOT exhausted</span>? <span class="warn">(Common issue)</span></div>
+        <div class="radio-group">
+          <label><input type="radio" name="gw2" value="ok|Auth token is valid — no exhaustion" checked> Token Valid</label>
+          <label><input type="radio" name="gw2" value="err|Auth token EXHAUSTED — connections dropping"> Token exhausted</label>
+          <label><input type="radio" name="gw2" value="warn|Auth token showing warning signs"> Warning signs</label>
+        </div>
+        <div class="detail-row" id="gw2-d">
+          <textarea rows="2" id="gw2-t" placeholder="How frequently are connections dropping? Since when?"></textarea>
+          <span class="hint">⚠️ Mitigation: Wakanda Support needs to increase the available authentication token.</span>
+        </div>
+      </div>
+
+      <div class="qrow">
+        <div class="qlabel"><strong>3.</strong> Is there active traffic going through the API Gateway?</div>
+        <div class="radio-group">
+          <label><input type="radio" name="gw3" value="ok|Traffic is normal — no anomalies" checked> Normal traffic</label>
+          <label><input type="radio" name="gw3" value="warn|High traffic — possible partner-side issue"> High traffic</label>
+          <label><input type="radio" name="gw3" value="err|No traffic detected — possible connectivity issue"> No traffic</label>
+        </div>
+        <div class="detail-row" id="gw3-d">
+          <textarea rows="2" id="gw3-t" placeholder="Describe traffic anomaly. If high traffic — possible issue is on partner side."></textarea>
+          <span class="hint">Note: If traffic is high and exceeds quota, the problem may originate from the partner side.</span>
+        </div>
+      </div>
+
+      <div class="qrow">
+        <div class="qlabel"><strong>4.</strong> Are there <span class="warn">Quota Violation errors</span> on the API Gateway? (creditRating-v1: 600/min · partners-mynt-v1: 2400/min)</div>
+        <div class="radio-group">
+          <label><input type="radio" name="gw4" value="ok|No Quota Violation errors" checked> No violations</label>
+          <label><input type="radio" name="gw4" value="err|Quota Violation errors observed"> Quota violations</label>
+        </div>
+        <div class="detail-row" id="gw4-d">
+          <textarea rows="2" id="gw4-t" placeholder="Which endpoint? Current call rate vs limit? Time of violation?"></textarea>
+          <span class="hint">Quota Violation means traffic exceeded Wakanda-configured limits. Wakanda needs to review.</span>
+        </div>
+      </div>
+
+      <div class="screenshot-row">
+        <div class="screenshot-row-left">
+          <strong>Screenshot</strong>
+          <span>Attach screenshot if failure or delay exists.</span>
+        </div>
+        <div class="screenshot-toggle"
+          <button id="gw-ss-no" class="active" onclick="toggleSS('gw','no')">No screenshot</button>
+          <button id="gw-ss-yes" onclick="toggleSS('gw','yes')">Has screenshot</button>
+        </div>
+      </div>
+      <input type="hidden" id="gw-screenshot" value="no" />
+
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-hdr hdr-wakanda">
+      <div class="sec-title">Apigee / MYNT — Partner-Side Observations</div>
+      <div class="sec-owner">Wakanda / Rochelle Panteria</div>
+    </div>
+    <div class="sec-body">
+
+      <div class="partner-note">
+        ℹ️ This section covers issues <strong>observed by L1</strong> that appear to originate from the Apigee/MYNT side (outside our EDS MS scope). These are included in the email so Wakanda can investigate and act on their end.
+      </div>
+
+      <div class="qrow">
+        <div class="qlabel"><strong>1.</strong> Are partners reporting errors when pulling TelcoScore data via Apigee? Select the affected partner(s):</div>
+
+        <div class="radio-group" style="margin-bottom:10px;">
+          <label><input type="radio" name="ap1-status" value="ok" checked onchange="handlePartnerStatus(this.value)"> No errors reported</label>
+          <label><input type="radio" name="ap1-status" value="err" onchange="handlePartnerStatus(this.value)"> Errors reported</label>
+          <label><input type="radio" name="ap1-status" value="na" onchange="handlePartnerStatus(this.value)"> Unconfirmed</label>
+        </div>
+
+        <div class="partner-select" id="partner-select-row">
+          <div class="partner-select-label">Which partner(s) are affected?</div>
+          <div class="partner-checkboxes">
+            <label class="partner-cb" id="cb-ts-label">
+              <input type="checkbox" id="cb-ts" value="TS" onchange="updatePartnerPreview()">
+              <span>TS</span>
+            </label>
+            <label class="partner-cb" id="cb-fs-label">
+              <input type="checkbox" id="cb-fs" value="FS" onchange="updatePartnerPreview()">
+              <span>FS</span>
+            </label>
+            <label class="partner-cb" id="cb-hc-label">
+              <input type="checkbox" id="cb-hc" value="HC" onchange="updatePartnerPreview()">
+              <span>HC</span>
+            </label>
+          </div>
+          <div class="partner-recipient-preview" id="partner-recipient-preview"></div>
+        </div>
+
+        <div class="detail-row" id="ap1-d">
+          <textarea rows="2" id="ap1-t" placeholder="What error code or message is each partner reporting?"></textarea>
+        </div>
+      </div>
+
+      <div class="qrow">
+        <div class="qlabel"><strong>2.</strong> Are there <span class="warn">Quota Violation errors</span> on Apigee side? (creditRating-v1: 600/min · partners-mynt-v1: 2400/min)</div>
+        <div class="radio-group">
+          <label><input type="radio" name="ap2" value="ok|No Quota Violation errors observed" checked> No violations</label>
+          <label><input type="radio" name="ap2" value="err|Quota Violation errors observed on Apigee"> Quota violations</label>
+        </div>
+        <div class="detail-row" id="ap2-d">
+          <textarea rows="2" id="ap2-t" placeholder="Which endpoint? Estimated call rate vs limit? Time of violation?"></textarea>
+          <span class="hint">Quota Violation occurs when traffic exceeds Wakanda-configured limits. Wakanda needs to review and adjust.</span>
+        </div>
+      </div>
+
+      <div class="qrow">
+        <div class="qlabel"><strong>3.</strong> Is the issue on Apigee/MYNT side confirmed to be <strong>not caused by our (EDS/Globe) side</strong>?</div>
+        <div class="radio-group">
+          <label><input type="radio" name="ap3" value="ok|Confirmed — EDS/Globe side is healthy; issue is on Apigee/MYNT" checked> Confirmed partner-side issue</label>
+          <label><input type="radio" name="ap3" value="warn|Still investigating — root cause unclear"> Still investigating</label>
+          <label><input type="radio" name="ap3" value="na|Not applicable — no Apigee issues observed"> No Apigee issue</label>
+        </div>
+        <div class="detail-row" id="ap3-d">
+          <textarea rows="2" id="ap3-t" placeholder="Summary of findings so far. What was checked on our side to rule it out?"></textarea>
+        </div>
+      </div>
+
+      <div class="screenshot-row">
+        <div class="screenshot-row-left">
+          <strong>Screenshot</strong>
+          <span>Attach screenshot if failure or delay exists.</span>
+        </div>
+        <div class="screenshot-toggle">
+          <button id="ap-ss-no" class="active" onclick="toggleSS('ap','no')">No screenshot</button>
+          <button id="ap-ss-yes" onclick="toggleSS('ap','yes')">Has screenshot</button>
+        </div>
+      </div>
+      <input type="hidden" id="ap-screenshot" value="no" />
+
+    </div>
+  </div>
+
+  <div class="send-block send-block-wakanda">
+    <div class="send-info">
+      <span class="send-to-label">Recipient:</span>
+      <span class="send-to-val" id="wakanda-recipients-preview">Wakanda · MYNT</span>
+    </div>
+    <div class="send-actions">
+      <button class="btn-send btn-wakanda" onclick="openOutlook('wakanda')">Open in Outlook</button>
+      <button class="btn-copy-sm btn-wakanda-copy" onclick="copyEmail('wakanda')">Copy Email</button>
+    </div>
+  </div>
+
+  <!-- RESET -->
+  <div style="text-align:center; margin-top:28px; margin-bottom:8px;">
+    <button class="btn-reset" onclick="resetAll()">Reset All Forms</button>
+  </div>
+
+  <!-- EMAIL / GCHAT PREVIEW -->
+  <div class="preview" id="preview">
+    <div class="prev-hdr" id="prev-meta"></div>
+    <div class="preview-type-badge" id="preview-type-badge"></div>
+    <div class="prev-body" id="prev-body"></div>
+    <div class="prev-foot">
+      <button onclick="doCopy()">Copy message</button>
+      <span class="copy-ok" id="copy-ok">Copied!</span>
+    </div>
+  </div>
+
+</div>
+<script src="telcoscore_l1_status_v2.js"></script>
+</body>
+</html>
