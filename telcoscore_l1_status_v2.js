@@ -129,15 +129,14 @@ function buildPlatformEmail() {
 
   let body = `Hi Platform Team,\n\nPlease find below the TelcoScore L1 Airflow status check for ${date}${time ? ' at ' + time : ''}.\n\n`;
   body += `══════════════════════════════════════════════\n`;
-  body += `  AIRFLOW JOBS — EDS Data Pipeline\n`;
-  body += `  Scope: Globe / EDS MS\n`;
+  body += `  AIRFLOW JOBS (EDS Data Pipeline)\n`;
   body += `══════════════════════════════════════════════\n`;
   body += line('[Q1]', af1.label, af1.lvl, isIssue(af1.lvl) ? tv('af1-t') : '');
   body += line('[Q2]', af2.label, af2.lvl, isIssue(af2.lvl) ? tv('af2-t') : '');
   body += line('[Q3]', af3.label, af3.lvl, isIssue(af3.lvl) ? tv('af3-t') : '');
   body += `  📎 Screenshot: ${afSS ? 'Please find attached file/screenshot' : 'N/A'}\n\n`;
   body += `══════════════════════════════════════════════\n`;
-  body += `  OVERALL: ${anyIssue ? '🔴 Issues detected — please review.' : '✅ All clear.'}\n`;
+  body += `  OVERALL: ${anyIssue ? '🔴 Issues detected. Please review.' : '✅ All clear.'}\n`;
   body += `══════════════════════════════════════════════\n\n`;
   body += `Kindly acknowledge receipt of this report.\n`;
   if (anyIssue) body += `Please coordinate on the flagged items above.\n`;

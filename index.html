@@ -54,7 +54,7 @@
   <!-- ═══════════════════════════════════ -->
   <!--  PLATFORM — Airflow                -->
   <!-- ═══════════════════════════════════ -->
-  <div class="block-label block-platform">Platform Team — Airflow Jobs</div>
+  <div class="block-label block-platform">Platform Team</div>
 
   <div class="sec">
     <div class="sec-hdr hdr-platform">
@@ -63,7 +63,7 @@
     <div class="sec-body">
 
       <div class="qrow">
-        <div class="qlabel"><strong>1.</strong> Are all Airflow jobs (staging task &amp; extract task) completing successfully?</div>
+        <div class="qlabel"><strong>1.</strong> Are all Airflow jobs completing successfully?</div>
         <div class="radio-group">
           <label><input type="radio" name="af1" value="ok|All jobs completed successfully" checked> All Completed</label>
           <label><input type="radio" name="af1" value="err|One or more jobs FAILED"> Job(s) Failed</label>
@@ -79,7 +79,7 @@
         <div class="qlabel"><strong>2.</strong> Was data successfully pushed to S3 Extract path <code>s3://s3-prd-edo-data-olyp/e1/data/zze_telcoscore/</code>?</div>
         <div class="radio-group">
           <label><input type="radio" name="af2" value="ok|Data present in S3 Extract" checked> Data Present</label>
-          <label><input type="radio" name="af2" value="err|Data missing or incomplete in S3 Extract"> Missing/incomplete</label>
+          <label><input type="radio" name="af2" value="err|Data missing or incomplete in S3 Extract"> Incomplete</label>
           <label><input type="radio" name="af2" value="na|Not yet verified"> Not checked</label>
         </div>
         <div class="detail-row" id="af2-d">
@@ -127,7 +127,7 @@
   <!-- ═══════════════════════════════════ -->
   <!--  INFRASTRUCTURE — Database         -->
   <!-- ═══════════════════════════════════ -->
-  <div class="block-label block-infra">Infrastructure Team — Database</div>
+  <div class="block-label block-infra">Infrastructure Team</div>
 
   <div class="sec">
     <div class="sec-hdr hdr-infra">
@@ -237,7 +237,7 @@
   <!-- ═══════════════════════════════════ -->
   <!--  WAKANDA — Gateway + Partner Obs   -->
   <!-- ═══════════════════════════════════ -->
-  <div class="block-label block-wakanda">Wakanda / Partners — Gateway &amp; Observations</div>
+  <div class="block-label block-wakanda">Wakanda / Partners</div>
 
   <div class="sec">
     <div class="sec-hdr hdr-wakanda">
@@ -248,7 +248,7 @@
       <div class="qrow">
         <div class="qlabel"><strong>1.</strong> Is the API Gateway (LB with 2 EC2) currently UP and serving requests?</div>
         <div class="radio-group">
-          <label><input type="radio" name="gw1" value="ok|Gateway is UP — both EC2 healthy" checked> UP (both EC2 healthy)</label>
+          <label><input type="radio" name="gw1" value="ok|Gateway is UP (both EC2 healthy)" checked> UP (both EC2 healthy)</label>
           <label><input type="radio" name="gw1" value="err|Gateway DOWN"> DOWN</label>
           <label><input type="radio" name="gw1" value="warn|Intermittent — one EC2 unhealthy"> Intermittent</label>
         </div>
@@ -260,7 +260,7 @@
       <div class="qrow">
         <div class="qlabel"><strong>2.</strong> Is the Authentication Token for Apigee connections valid and <span class="warn">NOT exhausted</span>? <span class="warn">(Common issue)</span></div>
         <div class="radio-group">
-          <label><input type="radio" name="gw2" value="ok|Auth token is valid — no exhaustion" checked> Token Valid</label>
+          <label><input type="radio" name="gw2" value="ok|Auth token is valid (no exhaustion)" checked> Token Valid</label>
           <label><input type="radio" name="gw2" value="err|Auth token EXHAUSTED — connections dropping"> Token exhausted</label>
           <label><input type="radio" name="gw2" value="warn|Auth token showing warning signs"> Warning signs</label>
         </div>
@@ -273,7 +273,7 @@
       <div class="qrow">
         <div class="qlabel"><strong>3.</strong> Is there active traffic going through the API Gateway?</div>
         <div class="radio-group">
-          <label><input type="radio" name="gw3" value="ok|Traffic is normal — no anomalies" checked> Normal traffic</label>
+          <label><input type="radio" name="gw3" value="ok|Traffic is normal (no anomalies)" checked> Normal traffic</label>
           <label><input type="radio" name="gw3" value="warn|High traffic — possible partner-side issue"> High traffic</label>
           <label><input type="radio" name="gw3" value="err|No traffic detected — possible connectivity issue"> No traffic</label>
         </div>
@@ -313,7 +313,6 @@
   <div class="sec">
     <div class="sec-hdr hdr-wakanda">
       <div class="sec-title">Apigee / MYNT — Partner-Side Observations</div>
-      <div class="sec-owner">Wakanda / Rochelle Panteria</div>
     </div>
     <div class="sec-body">
 
