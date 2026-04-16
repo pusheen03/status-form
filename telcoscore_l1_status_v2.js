@@ -1,7 +1,8 @@
 /* ── GCHAT CONFIG ── */
 const GCHAT = {
-  webhook : 'https://chat.googleapis.com/v1/spaces/AAQAos2lyw8/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=YRRGulOMHa--v35bF0PC0U9d2Z6shF5b4DRwrq9VYsY',
-  spaceUrl: 'https://mail.google.com/mail/u/0/#chat/space/AAQAos2lyw8',
+  webhook : 'https://chat.googleapis.com/v1/spaces/AAAAj7UKkRU/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=pMhHx51QSXmtGMjqL9KaVz0h3hUn-DblyYCGWE8iISo',
+  
+  spaceUrl: 'https://chat.google.com/app/chat/AAAAj7UKkRU',
 };
 
 /* ── EMAILS / DOMAINS (update these to real addresses) ── */
@@ -17,10 +18,38 @@ const EMAILS = {
 
 /* ── INIT DATE / TIME ── */
 const now = new Date();
-document.getElementById('rdate').value = now.toISOString().split('T')[0];
-document.getElementById('rtime').value =
-  now.getHours().toString().padStart(2,'0') + ':' +
-  now.getMinutes().toString().padStart(2,'0') + ' PHT';
+const dateInput = document.getElementById('rdate');
+const timeInput = document.getElementById('rtime');
+let isTimeLive = true;
+let isDateManual = false;
+
+function formatTimeValue(date) {
+  return date.getHours().toString().padStart(2,'0') + ':' +
+         date.getMinutes().toString().padStart(2,'0');
+}
+
+function updateLiveDateTime() {
+  const current = new Date();
+  if (!isDateManual) {
+    dateInput.value = current.toISOString().split('T')[0];
+  }
+  if (isTimeLive) {
+    timeInput.value = formatTimeValue(current);
+  }
+}
+
+function resetTime() {
+  isTimeLive = true;
+  updateLiveDateTime();
+}
+
+updateLiveDateTime();
+setInterval(updateLiveDateTime, 1000);
+
+dateInput.addEventListener('input', () => { isDateManual = true; });
+timeInput.addEventListener('input', () => { isTimeLive = false; });
+
+timeInput.addEventListener('focus', () => { isTimeLive = false; });
 
 /* ── SECTION SWITCHING ── */
 function switchSection(section) {
@@ -490,11 +519,9 @@ function resetAll() {
     document.getElementById(sec + '-ss-yes').classList.remove('active');
   });
 
-  const n = new Date();
-  document.getElementById('rdate').value = n.toISOString().split('T')[0];
-  document.getElementById('rtime').value =
-    n.getHours().toString().padStart(2,'0') + ':' +
-    n.getMinutes().toString().padStart(2,'0') + ' PHT';
+  isTimeLive = true;
+  isDateManual = false;
+  updateLiveDateTime();
 
   switchSection('infra');
 }

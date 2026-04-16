@@ -16,13 +16,20 @@
 <div class="app">
 
   <div class="meta">
-    <div class="field">
+    <div class="field date-field">
       <label class="lbl">Date</label>
-      <input type="text" id="rdate" />
+      <div class="field-input-wrap">
+        <span class="field-icon">📅</span>
+        <input type="date" id="rdate" />
+      </div>
     </div>
-    <div class="field">
+    <div class="field time-field">
       <label class="lbl">Time</label>
-      <input type="text" id="rtime" placeholder="e.g. 08:00 PHT" />
+      <div class="field-input-wrap">
+        <input type="time" id="rtime" step="60" />
+        <span class="time-reset-btn" onclick="resetTime()" title="Reset to live time">↻</span>
+        <span class="field-addon">PHT</span>
+      </div>
     </div>
   </div>
 
