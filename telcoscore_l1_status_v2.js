@@ -22,6 +22,15 @@ document.getElementById('rtime').value =
   now.getHours().toString().padStart(2,'0') + ':' +
   now.getMinutes().toString().padStart(2,'0') + ' PHT';
 
+/* ── SECTION SWITCHING ── */
+function switchSection(section) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('section-' + section).classList.add('active');
+}
+
+// Set default to infra
+switchSection('infra');
+
 /* ── DETAIL TOGGLE ── */
 const detailTriggers = {
   af1: ['err','warn'], af2: ['err'], af3: ['err'],
@@ -486,4 +495,6 @@ function resetAll() {
   document.getElementById('rtime').value =
     n.getHours().toString().padStart(2,'0') + ':' +
     n.getMinutes().toString().padStart(2,'0') + ' PHT';
+
+  switchSection('infra');
 }

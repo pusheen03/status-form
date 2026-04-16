@@ -10,7 +10,7 @@
 
 <div class="page-header">
   <h1>Status Report</h1>
-  <p>Fill all sections and generate email on outlook</p>
+  <p>Fill all sections and generate email</p>
 </div>
 
 <div class="app">
@@ -28,105 +28,33 @@
 
   <!-- RECIPIENT GUIDE -->
   <div class="recipient-guide">
-    <div class="rg-item rg-platform">
-      <div class="rg-dot"></div>
-      <div>
-        <div class="rg-label">Platform Team</div>
-        <div class="rg-section">Airflow Jobs</div>
-      </div>
-    </div>
-    <div class="rg-item rg-infra">
+    <div class="rg-item rg-infra" onclick="switchSection('infra')">
       <div class="rg-dot"></div>
       <div>
         <div class="rg-label">Infrastructure Team</div>
         <div class="rg-section">Database (DB)</div>
       </div>
     </div>
-    <div class="rg-item rg-wakanda">
+    <div class="rg-item rg-wakanda" onclick="switchSection('wakanda')">
       <div class="rg-dot"></div>
       <div>
         <div class="rg-label">Wakanda / Partners</div>
         <div class="rg-section">Gateway + Partner Observations</div>
       </div>
     </div>
-  </div>
-
-  <!-- ═══════════════════════════════════ -->
-  <!--  PLATFORM — Airflow                -->
-  <!-- ═══════════════════════════════════ -->
-  <div class="block-label block-platform">Platform Team</div>
-
-  <div class="sec">
-    <div class="sec-hdr hdr-platform">
-      <div class="sec-title">Airflow Jobs — EDS Data Pipeline</div>
-    </div>
-    <div class="sec-body">
-
-      <div class="qrow">
-        <div class="qlabel"><strong>1.</strong> Are all Airflow jobs completing successfully?</div>
-        <div class="radio-group">
-          <label><input type="radio" name="af1" value="ok|All jobs completed successfully" checked> All Completed</label>
-          <label><input type="radio" name="af1" value="err|One or more jobs FAILED"> Job(s) Failed</label>
-          <label><input type="radio" name="af1" value="warn|Jobs delayed / pending"> Delayed/Pending</label>
-        </div>
-        <div class="detail-row" id="af1-d">
-          <textarea rows="2" id="af1-t" placeholder="Which DAG/task failed? Error message? (e.g. DAG 'etl_zze_mynt' — task 'extract_task': S3 connection timeout)"></textarea>
-          <span class="hint">Check Airflow UI → failed tasks → view logs.</span>
-        </div>
+    <div class="rg-item rg-platform" onclick="switchSection('platform')">
+      <div class="rg-dot"></div>
+      <div>
+        <div class="rg-label">Platform Team</div>
+        <div class="rg-section">Airflow Jobs</div>
       </div>
-
-      <div class="qrow">
-        <div class="qlabel"><strong>2.</strong> Was data successfully pushed to S3 Extract path <code>s3://s3-prd-edo-data-olyp/e1/data/zze_telcoscore/</code>?</div>
-        <div class="radio-group">
-          <label><input type="radio" name="af2" value="ok|Data present in S3 Extract" checked> Data Present</label>
-          <label><input type="radio" name="af2" value="err|Data missing or incomplete in S3 Extract"> Incomplete</label>
-          <label><input type="radio" name="af2" value="na|Not yet verified"> Not checked</label>
-        </div>
-        <div class="detail-row" id="af2-d">
-          <textarea rows="2" id="af2-t" placeholder="What is missing? Last successful run timestamp?"></textarea>
-        </div>
-      </div>
-
-      <div class="qrow">
-        <div class="qlabel"><strong>3.</strong> Any EDS API quota/rate-limit alerts? (Limit: 30 req/s · 50 burst · 1.2M/day)</div>
-        <div class="radio-group">
-          <label><input type="radio" name="af3" value="ok|No quota alerts" checked> No alerts</label>
-          <label><input type="radio" name="af3" value="err|Quota limit approaching or exceeded"> Quota issue</label>
-        </div>
-        <div class="detail-row" id="af3-d">
-          <textarea rows="2" id="af3-t" placeholder="Which API? Current usage vs limit? Time of alert?"></textarea>
-        </div>
-      </div>
-
-      <div class="screenshot-row">
-        <div class="screenshot-row-left">
-          <strong>Screenshot</strong>
-          <span>Attach screenshot if failure or delay exists.</span>
-        </div>
-        <div class="screenshot-toggle">
-          <button id="af-ss-no" class="active" onclick="toggleSS('af','no')">No screenshot</button>
-          <button id="af-ss-yes" onclick="toggleSS('af','yes')">Has screenshot</button>
-        </div>
-      </div>
-      <input type="hidden" id="af-screenshot" value="no" />
-
-    </div>
-  </div>
-
-  <div class="send-block send-block-platform">
-    <div class="send-info">
-      <span class="send-to-label">Recipient:</span>
-      <span class="send-to-val">Platform Team</span>
-    </div>
-    <div class="send-actions">
-      <button class="btn-send btn-platform" onclick="openOutlook('platform')">Open in Outlook</button>
-      <button class="btn-copy-sm btn-platform-copy" onclick="copyEmail('platform')">Copy Email</button>
     </div>
   </div>
 
   <!-- ═══════════════════════════════════ -->
   <!--  INFRASTRUCTURE — Database         -->
   <!-- ═══════════════════════════════════ -->
+  <div class="section" id="section-infra">
   <div class="block-label block-infra">Infrastructure Team</div>
 
   <div class="sec">
@@ -205,18 +133,6 @@
         </div>
       </div>
 
-      <div class="screenshot-row">
-        <div class="screenshot-row-left">
-          <strong>Screenshot</strong>
-          <span>Attach screenshot if any item has issues.</span>
-        </div>
-        <div class="screenshot-toggle">
-          <button id="db-ss-no" class="active" onclick="toggleSS('db','no')">No screenshot</button>
-          <button id="db-ss-yes" onclick="toggleSS('db','yes')">Has screenshot</button>
-        </div>
-      </div>
-      <input type="hidden" id="db-screenshot" value="no" />
-
     </div>
   </div>
 
@@ -233,10 +149,12 @@
       <span class="copy-ok-inline" id="infra-copy-ok"></span>
     </div>
   </div>
+  </div>
 
   <!-- ═══════════════════════════════════ -->
   <!--  WAKANDA — Gateway + Partner Obs   -->
   <!-- ═══════════════════════════════════ -->
+  <div class="section" id="section-wakanda">
   <div class="block-label block-wakanda">Wakanda / Partners</div>
 
   <div class="sec">
@@ -401,6 +319,83 @@
       <button class="btn-send btn-wakanda" onclick="openOutlook('wakanda')">Open in Outlook</button>
       <button class="btn-copy-sm btn-wakanda-copy" onclick="copyEmail('wakanda')">Copy Email</button>
     </div>
+  </div>
+</div>
+
+  <!-- ═══════════════════════════════════ -->
+  <!--  PLATFORM — Airflow                -->
+  <!-- ═══════════════════════════════════ -->
+  <div class="section" id="section-platform">
+  <div class="block-label block-platform">Platform Team</div>
+
+  <div class="sec">
+    <div class="sec-hdr hdr-platform">
+      <div class="sec-title">Airflow Jobs — EDS Data Pipeline</div>
+    </div>
+    <div class="sec-body">
+
+      <div class="qrow">
+        <div class="qlabel"><strong>1.</strong> Are all Airflow jobs completing successfully?</div>
+        <div class="radio-group">
+          <label><input type="radio" name="af1" value="ok|All jobs completed successfully" checked> All Completed</label>
+          <label><input type="radio" name="af1" value="err|One or more jobs FAILED"> Job(s) Failed</label>
+          <label><input type="radio" name="af1" value="warn|Jobs delayed / pending"> Delayed/Pending</label>
+        </div>
+        <div class="detail-row" id="af1-d">
+          <textarea rows="2" id="af1-t" placeholder="Which DAG/task failed? Error message? (e.g. DAG 'etl_zze_mynt' — task 'extract_task': S3 connection timeout)"></textarea>
+          <span class="hint">Check Airflow UI → failed tasks → view logs.</span>
+        </div>
+      </div>
+
+      <div class="qrow">
+        <div class="qlabel"><strong>2.</strong> Was data successfully pushed to S3 Extract path <code>s3://s3-prd-edo-data-olyp/e1/data/zze_telcoscore/</code>?</div>
+        <div class="radio-group">
+          <label><input type="radio" name="af2" value="ok|Data present in S3 Extract" checked> Data Present</label>
+          <label><input type="radio" name="af2" value="err|Data missing or incomplete in S3 Extract"> Incomplete</label>
+          <label><input type="radio" name="af2" value="na|Not yet verified"> Not checked</label>
+        </div>
+        <div class="detail-row" id="af2-d">
+          <textarea rows="2" id="af2-t" placeholder="What is missing? Last successful run timestamp?"></textarea>
+        </div>
+      </div>
+
+      <div class="qrow">
+        <div class="qlabel"><strong>3.</strong> Any EDS API quota/rate-limit alerts? (Limit: 30 req/s · 50 burst · 1.2M/day)</div>
+        <div class="radio-group">
+          <label><input type="radio" name="af3" value="ok|No quota alerts" checked> No alerts</label>
+          <label><input type="radio" name="af3" value="err|Quota limit approaching or exceeded"> Quota issue</label>
+        </div>
+        <div class="detail-row" id="af3-d">
+          <textarea rows="2" id="af3-t" placeholder="Which API? Current usage vs limit? Time of alert?"></textarea>
+        </div>
+      </div>
+
+      <div class="screenshot-row">
+        <div class="screenshot-row-left">
+          <strong>Screenshot</strong>
+          <span>Attach screenshot if failure or delay exists.</span>
+        </div>
+        <div class="screenshot-toggle">
+          <button id="af-ss-no" class="active" onclick="toggleSS('af','no')">No screenshot</button>
+          <button id="af-ss-yes" onclick="toggleSS('af','yes')">Has screenshot</button>
+        </div>
+      </div>
+      <input type="hidden" id="af-screenshot" value="no" />
+
+    </div>
+  </div>
+
+  <div class="send-block send-block-platform">
+    <div class="send-info">
+      <span class="send-to-label">Recipient:</span>
+      <span class="send-to-val">Platform Team</span>
+    </div>
+    <div class="send-actions">
+      <button class="btn-send btn-platform" onclick="openOutlook('platform')">Open in Outlook</button>
+      <button class="btn-copy-sm btn-platform-copy" onclick="copyEmail('platform')">Copy Email</button>
+    </div>
+  </div>
+
   </div>
 
   <!-- RESET -->

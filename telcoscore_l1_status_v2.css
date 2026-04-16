@@ -42,6 +42,13 @@ input[type=text]:focus { border-color: #aaa; background: #fff; }
 .rg-item {
   display: flex; align-items: flex-start; gap: 10px;
   padding: 12px 14px; border-radius: 10px; border: 1.5px solid;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+}
+.rg-item:hover {
+  transform: translateY(-2px);
+  border-color: #999;
+  background: rgba(0,0,0,0.04);
 }
 .rg-dot {
   width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 3px;
@@ -256,6 +263,10 @@ textarea::placeholder { color: #bbb; }
   transition: opacity 0.2s;
 }
 .btn-reset:hover { opacity: 0.82; }
+
+/* ── SECTIONS ── */
+.section { display: none; }
+.section.active { display: block; }
 
 /* ── EMAIL / GCHAT PREVIEW ── */
 .preview {
