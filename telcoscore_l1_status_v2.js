@@ -1,8 +1,7 @@
 /* ── GCHAT CONFIG ── */
 const GCHAT = {
-  webhook : 'https://chat.googleapis.com/v1/spaces/AAAAj7UKkRU/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=pMhHx51QSXmtGMjqL9KaVz0h3hUn-DblyYCGWE8iISo',
-  
-  spaceUrl: 'https://chat.google.com/app/chat/AAAAj7UKkRU',
+  webhook : 'https://chat.googleapis.com/v1/spaces/AAQAos2lyw8/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=YRRGulOMHa--v35bF0PC0U9d2Z6shF5b4DRwrq9VYsY',
+  spaceUrl: 'https://mail.google.com/mail/u/0/?tab=rm&ogbl#chat/space/AAQAos2lyw8',
 };
 
 /* ── EMAILS / DOMAINS (update these to real addresses) ── */
@@ -65,7 +64,7 @@ const detailTriggers = {
   af1: ['err','warn'], af2: ['err'], af3: ['err'],
   gw1: ['err','warn'], gw2: ['err','warn'], gw3: ['err','warn'], gw4: ['err'],
   db1: ['prog','sched'], db2: ['prog','sched'], db3: ['prog','sched'], db4: ['prog','sched'],
-  db5: ['err'], db6: ['err'],
+  db5: ['prog','sched'], db6: ['prog','sched'], db7: ['err'], db8: ['err'], db9: ['err'], db10: ['err'], db11: ['err'], db12: ['err'],
   ap2: ['err'], ap3: ['ok','warn']
 };
 Object.entries(detailTriggers).forEach(([name, triggers]) => {
@@ -197,6 +196,9 @@ function buildInfraGChat() {
   const db1 = parse(rv('db1')), db2 = parse(rv('db2'));
   const db3 = parse(rv('db3')), db4 = parse(rv('db4'));
   const db5 = parse(rv('db5')), db6 = parse(rv('db6'));
+  const db7 = parse(rv('db7')), db8 = parse(rv('db8'));
+  const db9 = parse(rv('db9')), db10 = parse(rv('db10'));
+  const db11 = parse(rv('db11')), db12 = parse(rv('db12'));
   const dbSS = sv('db-screenshot') === 'yes';
 
   const statusIcon = (lvl) =>
@@ -205,8 +207,8 @@ function buildInfraGChat() {
   const isDbIssue = (lvl) => lvl === 'err';
   const isNotDone = (lvl) => lvl === 'prog' || lvl === 'sched';
 
-  const anyIssue = [db1,db2,db3,db4,db5,db6].some(v => isDbIssue(v.lvl));
-  const anyPending = [db1,db2,db3,db4].some(v => isNotDone(v.lvl));
+  const anyIssue = [db1,db2,db3,db4,db5,db6,db7,db8,db9,db10,db11,db12].some(v => isDbIssue(v.lvl));
+  const anyPending = [db1,db2,db3,db4,db5,db6].some(v => isNotDone(v.lvl));
 
   const dbLine = (label, parsed, noteId) => {
     const ico = statusIcon(parsed.lvl);
@@ -217,26 +219,32 @@ function buildInfraGChat() {
   };
 
  
-  let msg = `Please find below the TelcoScore L1 DB health check ${date}${time ? ' at ' + time : ''}\n`;
+  let msg = `EDS L1 Monitoring Health Checks ${date}${time ? ' at ' + time : ''}\n`;
   msg += `\n`;
   msg += `━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-  msg += `*BATCH / PIPELINE STATUS*\n`;
+  msg += `*CRITICAL REPORTS STATUS*\n`;
   msg += `━━━━━━━━━━━━━━━━━━━━━━━━\n`;
   msg += dbLine('ADH Batch 1',  db1, 'db1-t');
   msg += dbLine('IN Summary',   db2, 'db2-t');
   msg += dbLine('New Delphi',   db3, 'db3-t');
   msg += dbLine('CWN Status',   db4, 'db4-t');
+  msg += dbLine('VOC RDL Field Engineer', db5, 'db5-t');
+  msg += dbLine('Revenue Accounting Monthly Report (Day 1)', db6, 'db6-t');
   msg += `\n`;
   msg += `━━━━━━━━━━━━━━━━━━━━━━━━\n`;
   msg += `*HEALTH CHECKS*\n`;
   msg += `━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-  msg += dbLine('Kafka & ADH CDC',            db5, 'db5-t');
-  msg += dbLine('Snowflake Ext. Table Refresh', db6, 'db6-t');
+  msg += dbLine('Snowflake Table Refresh', db7, 'db7-t');
+  msg += dbLine('Kafka Topics', db8, 'db8-t');
+  msg += dbLine('Kafka CDP Infra Monitoring', db9, 'db9-t');
+  msg += dbLine('Compute Infra Monitoring', db10, 'db10-t');
+  msg += dbLine('ADH CDC Status', db11, 'db11-t');
+  msg += dbLine('Open Issues', db12, 'db12-t');
   msg += `━━━━━━━━━━━━━━━━━━━━━━━━\n`;
 
-  if (anyIssue)        msg += `*OVERALL: 🔴 Issues detected — please review.*\n`;
+  if (anyIssue)        msg += `*OVERALL: 🔴 Issues detected. Please review.*\n`;
   else if (anyPending) msg += `*OVERALL: 🔄 Some items still in progress or scheduled.*\n`;
-  else                 msg += `*OVERALL: ✅ All items completed — no issues.*\n`;
+  else                 msg += `*OVERALL: ✅ All items completed. No issues.*\n`;
 
   msg += `━━━━━━━━━━━━━━━━━━━━━━━━\n`;
   msg += `\nKindly acknowledge receipt of this report.`;

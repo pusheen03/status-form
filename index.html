@@ -119,24 +119,92 @@
       </div>
 
       <div class="qrow">
-        <div class="qlabel"><strong>5.</strong> Kafka and ADH CDC health check</div>
+        <div class="qlabel"><strong>5.</strong> VOC RDL Field Engineer</div>
         <div class="radio-group">
-          <label><input type="radio" name="db5" value="ok|No Alerts" checked> No Alerts</label>
-          <label><input type="radio" name="db5" value="err|With Alert"> With Alert</label>
+          <label><input type="radio" name="db5" value="sched|Scheduled" checked> Scheduled</label>
+          <label><input type="radio" name="db5" value="prog|In-Progress"> In-Progress</label>
+          <label><input type="radio" name="db5" value="ok|Completed"> Completed</label>
         </div>
         <div class="detail-row" id="db5-d">
-          <textarea rows="2" id="db5-t" placeholder="Describe the alert — which topic/consumer group? Error message?"></textarea>
+          <textarea rows="2" id="db5-t" placeholder="Additional notes for VOC RDL Field Engineer"></textarea>
         </div>
       </div>
 
       <div class="qrow">
-        <div class="qlabel"><strong>6.</strong> Snowflake External Table Refresh Status</div>
+        <div class="qlabel"><strong>6.</strong> Revenue Accounting Monthly Report (Day 1)</div>
         <div class="radio-group">
-          <label><input type="radio" name="db6" value="ok|Successful" checked> Successful</label>
-          <label><input type="radio" name="db6" value="err|Failed"> Failed</label>
+          <label><input type="radio" name="db6" value="sched|Scheduled" checked> Scheduled</label>
+          <label><input type="radio" name="db6" value="prog|In-Progress"> In-Progress</label>
+          <label><input type="radio" name="db6" value="ok|Completed"> Completed</label>
         </div>
         <div class="detail-row" id="db6-d">
-          <textarea rows="2" id="db6-t" placeholder="Which table(s) failed to refresh? Error message or time of failure?"></textarea>
+          <textarea rows="2" id="db6-t" placeholder="Additional notes for Revenue Accounting Monthly Report (Day 1)"></textarea>
+        </div>
+      </div>
+
+      <div class="qrow">
+        <div class="qlabel"><strong>7.</strong> Snowflake Table Refresh</div>
+        <div class="radio-group">
+          <label><input type="radio" name="db7" value="ok|Successful" checked> Successful</label>
+          <label><input type="radio" name="db7" value="err|Failed"> Failed</label>
+        </div>
+        <div class="detail-row" id="db7-d">
+          <textarea rows="2" id="db7-t" placeholder="Which table(s) failed to refresh? Error message or time of failure?"></textarea>
+        </div>
+      </div>
+
+      <div class="qrow">
+        <div class="qlabel"><strong>8.</strong> Kafka Topics</div>
+        <div class="radio-group">
+          <label><input type="radio" name="db8" value="ok|Healthy" checked> Healthy</label>
+          <label><input type="radio" name="db8" value="err|With Alert"> With Alert</label>
+        </div>
+        <div class="detail-row" id="db8-d">
+          <textarea rows="2" id="db8-t" placeholder="Which topics have issues? Describe the problem."></textarea>
+        </div>
+      </div>
+
+      <div class="qrow">
+        <div class="qlabel"><strong>9.</strong> Kafka CDP Infra Monitoring</div>
+        <div class="radio-group">
+          <label><input type="radio" name="db9" value="ok|Healthy" checked> Healthy</label>
+          <label><input type="radio" name="db9" value="err|With Alert"> With Alert</label>
+        </div>
+        <div class="detail-row" id="db9-d">
+          <textarea rows="2" id="db9-t" placeholder="Describe any anomalies or concerns."></textarea>
+        </div>
+      </div>
+
+      <div class="qrow">
+        <div class="qlabel"><strong>10.</strong> Compute Infra Monitoring</div>
+        <div class="radio-group">
+          <label><input type="radio" name="db10" value="ok|Healthy" checked> Healthy</label>
+          <label><input type="radio" name="db10" value="err|With Alert"> With Alert</label>
+        </div>
+        <div class="detail-row" id="db10-d">
+          <textarea rows="2" id="db10-t" placeholder="Describe any infrastructure issues."></textarea>
+        </div>
+      </div>
+
+      <div class="qrow">
+        <div class="qlabel"><strong>11.</strong> ADH CDC Status</div>
+        <div class="radio-group">
+          <label><input type="radio" name="db11" value="ok|Healthy" checked> Healthy</label>
+          <label><input type="radio" name="db11" value="err|With Alert"> With Alert</label>
+        </div>
+        <div class="detail-row" id="db11-d">
+          <textarea rows="2" id="db11-t" placeholder="Describe the alert details."></textarea>
+        </div>
+      </div>
+
+      <div class="qrow">
+        <div class="qlabel"><strong>12.</strong> Open Issues</div>
+        <div class="radio-group">
+          <label><input type="radio" name="db12" value="ok|No Open Issues" checked> No Open Issues</label>
+          <label><input type="radio" name="db12" value="err|Open Issues Exist"> Open Issues Exist</label>
+        </div>
+        <div class="detail-row" id="db12-d">
+          <textarea rows="2" id="db12-t" placeholder="List any open issues and their status."></textarea>
         </div>
       </div>
 
