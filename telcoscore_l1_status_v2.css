@@ -109,6 +109,18 @@ input[type=time]:focus { border-color: #aaa; background: #fff; }
 .block-infra    { background: #d4f5e1; color: #1a7a40; }
 .block-wakanda  { background: #ffe8da; color: #b34010; }
 
+/* ── SUB TITLE ── */
+.sub-title {
+  font-size: 14px; font-weight: 600; color: black;
+  margin-bottom: 10px; margin-top: 10px;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  background: #E0E0E0;
+  padding: 8px 16px;
+  border-radius: 8px;
+  display: block;
+  text-align: center;
+}
+
 /* ── SECTION CARD ── */
 .sec { margin-bottom: 12px; }
 
