@@ -415,6 +415,7 @@ textarea::placeholder { color: #bbb; }
   padding: 7px 10px; border: 1.5px solid #b0d4f7;
   border-radius: 8px; background: #f5f8ff; color: #1a1a1a;
   outline: none; cursor: pointer;
+  /* flex-direction: column; */
 }
 
 /* Dynamic qrow highlight in edit mode */

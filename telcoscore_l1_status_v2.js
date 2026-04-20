@@ -262,7 +262,7 @@ function addDbItem(section) {
 
   /* Determine radio options */
   let radioHTML = '';
-  let placeholder = `Notes for ${name}`;
+  let placeholder = `Additional Notes for ${name}`;
 
   if (section === 'critical') {
     radioHTML = `
