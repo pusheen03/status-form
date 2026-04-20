@@ -346,3 +346,77 @@ textarea::placeholder { color: #bbb; }
 }
 .copy-ok { font-size: 12px; color: #2e7d32; font-weight: 500; display: none; }
 .attach-note { display: none; }
+
+/* ── DB EDIT MODE ── */
+.db-edit-toggle {
+  margin-left: auto;
+  font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600;
+  padding: 8px 16px; border-radius: 20px; cursor: pointer;
+  border: 1.5px solid rgba(255,255,255,0.35);
+  background: transparent; color: rgba(255,255,255,0.85);
+  transition: background 0.15s, color 0.15s;
+  letter-spacing: 0.03em;
+}
+.db-edit-toggle:hover { background: rgba(255,255,255,0.15); color: #fff; }
+.db-edit-toggle.active { background: #fff; color: #1a7a40; border-color: #fff; }
+
+/* Item label — switches between plain text and input */
+.item-label-text { font-weight: 600; color: #111; }
+.item-label-input {
+  display: none;
+  font-family: 'Inter', sans-serif; font-size: 13px;
+  padding: 4px 10px; border: 1.5px solid #b0d4f7;
+  border-radius: 8px; background: #f5f8ff; color: #1a1a1a;
+  width: 100%; max-width: 320px; outline: none;
+}
+.item-label-input:focus { border-color: #2980d4; }
+
+/* Show input, hide text in edit mode */
+.db-edit-active .item-label-text { display: none; }
+.db-edit-active .item-label-input { display: inline-block; }
+
+/* Remove button — hidden until edit mode */
+.item-remove-btn {
+  display: none;
+  margin-left: 10px;
+  font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700;
+  padding: 3px 9px; border-radius: 20px; cursor: pointer;
+  border: 1.5px solid #f5c0c0; background: #fff0f0; color: #c0392b;
+  transition: background 0.15s;
+  vertical-align: middle;
+}
+.item-remove-btn:hover { background: #ffe0e0; }
+.db-edit-active .item-remove-btn { display: inline-block; }
+
+/* Add item button */
+.db-add-row {
+  display: none;
+  margin-top: 12px; margin-bottom: 4px;
+}
+.db-edit-active .db-add-row { display: flex; align-items: center; gap: 10px; }
+.db-add-input {
+  font-family: 'Inter', sans-serif; font-size: 13px;
+  padding: 7px 12px; border: 1.5px solid #b0d4f7;
+  border-radius: 8px; background: #f5f8ff; color: #1a1a1a;
+  flex: 1; outline: none;
+}
+.db-add-input:focus { border-color: #2980d4; }
+.db-add-btn {
+  font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600;
+  padding: 7px 16px; border-radius: 20px; cursor: pointer;
+  border: none; background: #1a7a40; color: #fff;
+  white-space: nowrap; transition: opacity 0.15s;
+}
+.db-add-btn:hover { opacity: 0.85; }
+
+/* Options type selector for new items */
+.db-add-type {
+  font-family: 'Inter', sans-serif; font-size: 12px;
+  padding: 7px 10px; border: 1.5px solid #b0d4f7;
+  border-radius: 8px; background: #f5f8ff; color: #1a1a1a;
+  outline: none; cursor: pointer;
+}
+
+/* Dynamic qrow highlight in edit mode */
+.db-edit-active .qrow { position: relative; }
+.db-edit-active .qrow:hover { background: #f8fbff; border-radius: 8px; }

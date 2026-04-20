@@ -67,13 +67,20 @@
   <div class="sec">
     <div class="sec-hdr hdr-infra">
       <div class="sec-title">Database (DB) — Monitor Site</div>
+      <button class="db-edit-toggle" id="db-edit-toggle" onclick="toggleDbEdit()">Edit Items</button>
     </div>
     <div class="sec-body">
 
       <div class="sub-title">Critical Reports Status</div>
 
-      <div class="qrow">
-        <div class="qlabel"><strong>1.</strong> ADH Batch 1</div>
+      <div id="critical-items-container">
+
+      <div class="qrow" id="qrow-db1" data-section="critical">
+        <div class="qlabel">
+          <span class="item-label-text">1. ADH Batch 1</span>
+          <input class="item-label-input" value="ADH Batch 1" oninput="syncItemLabel(this,'db1-label-text')">
+          <button class="item-remove-btn" onclick="removeDbItem('qrow-db1','db1','critical')">✕ Remove</button>
+        </div>
         <div class="radio-group">
           <label><input type="radio" name="db1" value="sched|Scheduled" checked> Scheduled</label>
           <label><input type="radio" name="db1" value="prog|In-Progress"> In-Progress</label>
@@ -84,8 +91,12 @@
         </div>
       </div>
 
-      <div class="qrow">
-        <div class="qlabel"><strong>2.</strong> IN Summary</div>
+      <div class="qrow" id="qrow-db2" data-section="critical">
+        <div class="qlabel">
+          <span class="item-label-text">2. IN Summary</span>
+          <input class="item-label-input" value="IN Summary" oninput="syncItemLabel(this,'db2-label-text')">
+          <button class="item-remove-btn" onclick="removeDbItem('qrow-db2','db2','critical')">✕ Remove</button>
+        </div>
         <div class="radio-group">
           <label><input type="radio" name="db2" value="sched|Scheduled" checked> Scheduled</label>
           <label><input type="radio" name="db2" value="prog|In-Progress"> In-Progress</label>
@@ -96,8 +107,12 @@
         </div>
       </div>
 
-      <div class="qrow">
-        <div class="qlabel"><strong>3.</strong> New Delphi</div>
+      <div class="qrow" id="qrow-db3" data-section="critical">
+        <div class="qlabel">
+          <span class="item-label-text">3. New Delphi</span>
+          <input class="item-label-input" value="New Delphi" oninput="syncItemLabel(this,'db3-label-text')">
+          <button class="item-remove-btn" onclick="removeDbItem('qrow-db3','db3','critical')">✕ Remove</button>
+        </div>
         <div class="radio-group">
           <label><input type="radio" name="db3" value="sched|Scheduled" checked> Scheduled</label>
           <label><input type="radio" name="db3" value="prog|In-Progress"> In-Progress</label>
@@ -108,8 +123,12 @@
         </div>
       </div>
 
-      <div class="qrow">
-        <div class="qlabel"><strong>4.</strong> CWN Status</div>
+      <div class="qrow" id="qrow-db4" data-section="critical">
+        <div class="qlabel">
+          <span class="item-label-text">4. CWN Status</span>
+          <input class="item-label-input" value="CWN Status" oninput="syncItemLabel(this,'db4-label-text')">
+          <button class="item-remove-btn" onclick="removeDbItem('qrow-db4','db4','critical')">✕ Remove</button>
+        </div>
         <div class="radio-group">
           <label><input type="radio" name="db4" value="sched|Scheduled" checked> Scheduled</label>
           <label><input type="radio" name="db4" value="prog|In-Progress"> In-Progress</label>
@@ -120,8 +139,12 @@
         </div>
       </div>
 
-      <div class="qrow">
-        <div class="qlabel"><strong>5.</strong> VOC RDL Field Engineer</div>
+      <div class="qrow" id="qrow-db5" data-section="critical">
+        <div class="qlabel">
+          <span class="item-label-text">5. VOC RDL Field Engineer</span>
+          <input class="item-label-input" value="VOC RDL Field Engineer" oninput="syncItemLabel(this,'db5-label-text')">
+          <button class="item-remove-btn" onclick="removeDbItem('qrow-db5','db5','critical')">✕ Remove</button>
+        </div>
         <div class="radio-group">
           <label><input type="radio" name="db5" value="sched|Scheduled" checked> Scheduled</label>
           <label><input type="radio" name="db5" value="prog|In-Progress"> In-Progress</label>
@@ -132,8 +155,12 @@
         </div>
       </div>
 
-      <div class="qrow">
-        <div class="qlabel"><strong>6.</strong> Revenue Accounting Monthly Report (Day 1)</div>
+      <div class="qrow" id="qrow-db6" data-section="critical">
+        <div class="qlabel">
+          <span class="item-label-text">6. Revenue Accounting Monthly Report (Day 1)</span>
+          <input class="item-label-input" value="Revenue Accounting Monthly Report (Day 1)" oninput="syncItemLabel(this,'db6-label-text')">
+          <button class="item-remove-btn" onclick="removeDbItem('qrow-db6','db6','critical')">✕ Remove</button>
+        </div>
         <div class="radio-group">
           <label><input type="radio" name="db6" value="sched|Scheduled" checked> Scheduled</label>
           <label><input type="radio" name="db6" value="prog|In-Progress"> In-Progress</label>
@@ -144,10 +171,24 @@
         </div>
       </div>
 
+      </div><!-- /#critical-items-container -->
+
+      <!-- Add new Critical Report item -->
+      <div class="db-add-row" id="add-critical-row">
+        <input class="db-add-input" id="add-critical-input" placeholder="New item name (e.g. Monthly Revenue Report)">
+        <button class="db-add-btn" onclick="addDbItem('critical')">+ Add Item</button>
+      </div>
+
       <div class="sub-title">Health Checks</div>
 
-      <div class="qrow">
-        <div class="qlabel"><strong>1.</strong> Snowflake Table Refresh</div>
+      <div id="health-items-container">
+
+      <div class="qrow" id="qrow-db7" data-section="health">
+        <div class="qlabel">
+          <span class="item-label-text">1. Snowflake Table Refresh</span>
+          <input class="item-label-input" value="Snowflake Table Refresh">
+          <button class="item-remove-btn" onclick="removeDbItem('qrow-db7','db7','health')">✕ Remove</button>
+        </div>
         <div class="radio-group">
           <label><input type="radio" name="db7" value="ok|Successful" checked> Successful</label>
           <label><input type="radio" name="db7" value="err|Failed"> Failed</label>
@@ -157,8 +198,12 @@
         </div>
       </div>
 
-      <div class="qrow">
-        <div class="qlabel"><strong>2.</strong> Kafka Topics</div>
+      <div class="qrow" id="qrow-db8" data-section="health">
+        <div class="qlabel">
+          <span class="item-label-text">2. Kafka Topics</span>
+          <input class="item-label-input" value="Kafka Topics">
+          <button class="item-remove-btn" onclick="removeDbItem('qrow-db8','db8','health')">✕ Remove</button>
+        </div>
         <div class="radio-group">
           <label><input type="radio" name="db8" value="ok|Healthy" checked> Healthy</label>
           <label><input type="radio" name="db8" value="err|With Alert"> With Alert</label>
@@ -168,8 +213,12 @@
         </div>
       </div>
 
-      <div class="qrow">
-        <div class="qlabel"><strong>3.</strong> Kafka CDP Infra Monitoring</div>
+      <div class="qrow" id="qrow-db9" data-section="health">
+        <div class="qlabel">
+          <span class="item-label-text">3. Kafka CDP Infra Monitoring</span>
+          <input class="item-label-input" value="Kafka CDP Infra Monitoring">
+          <button class="item-remove-btn" onclick="removeDbItem('qrow-db9','db9','health')">✕ Remove</button>
+        </div>
         <div class="radio-group">
           <label><input type="radio" name="db9" value="ok|Healthy" checked> Healthy</label>
           <label><input type="radio" name="db9" value="err|With Alert"> With Alert</label>
@@ -179,8 +228,12 @@
         </div>
       </div>
 
-      <div class="qrow">
-        <div class="qlabel"><strong>4.</strong> Compute Infra Monitoring</div>
+      <div class="qrow" id="qrow-db10" data-section="health">
+        <div class="qlabel">
+          <span class="item-label-text">4. Compute Infra Monitoring</span>
+          <input class="item-label-input" value="Compute Infra Monitoring">
+          <button class="item-remove-btn" onclick="removeDbItem('qrow-db10','db10','health')">✕ Remove</button>
+        </div>
         <div class="radio-group">
           <label><input type="radio" name="db10" value="ok|Healthy" checked> Healthy</label>
           <label><input type="radio" name="db10" value="err|With Alert"> With Alert</label>
@@ -190,8 +243,12 @@
         </div>
       </div>
 
-      <div class="qrow">
-        <div class="qlabel"><strong>5.</strong> ADH CDC Status</div>
+      <div class="qrow" id="qrow-db11" data-section="health">
+        <div class="qlabel">
+          <span class="item-label-text">5. ADH CDC Status</span>
+          <input class="item-label-input" value="ADH CDC Status">
+          <button class="item-remove-btn" onclick="removeDbItem('qrow-db11','db11','health')">✕ Remove</button>
+        </div>
         <div class="radio-group">
           <label><input type="radio" name="db11" value="ok|Healthy" checked> Healthy</label>
           <label><input type="radio" name="db11" value="err|With Alert"> With Alert</label>
@@ -201,8 +258,12 @@
         </div>
       </div>
 
-      <div class="qrow">
-        <div class="qlabel"><strong>6.</strong> Open Issues</div>
+      <div class="qrow" id="qrow-db12" data-section="health">
+        <div class="qlabel">
+          <span class="item-label-text">6. Open Issues</span>
+          <input class="item-label-input" value="Open Issues">
+          <button class="item-remove-btn" onclick="removeDbItem('qrow-db12','db12','health')">✕ Remove</button>
+        </div>
         <div class="radio-group">
           <label><input type="radio" name="db12" value="ok|No Open Issues" checked> No Open Issues</label>
           <label><input type="radio" name="db12" value="err|Open Issues Exist"> Open Issues Exist</label>
@@ -210,6 +271,19 @@
         <div class="detail-row" id="db12-d">
           <textarea rows="2" id="db12-t" placeholder="List any open issues and their status."></textarea>
         </div>
+      </div>
+
+      </div><!-- /#health-items-container -->
+
+      <!-- Add new Health Check item -->
+      <div class="db-add-row" id="add-health-row">
+        <input class="db-add-input" id="add-health-input" placeholder="New health check item (e.g. Airflow DAG Monitor)">
+        <select class="db-add-type" id="add-health-type">
+          <option value="health-ok-alert">Healthy / With Alert</option>
+          <option value="health-success-fail">Successful / Failed</option>
+          <option value="health-no-open">No Open Issues / Open Issues Exist</option>
+        </select>
+        <button class="db-add-btn" onclick="addDbItem('health')">+ Add Item</button>
       </div>
 
     </div>

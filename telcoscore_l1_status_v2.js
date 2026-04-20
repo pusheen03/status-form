@@ -183,63 +183,197 @@ function buildPlatformEmail() {
 }
 
 /* ══════════════════════════════════════
+   DB EDIT MODE
+══════════════════════════════════════ */
+let dbEditActive = false;
+let customItemCounter = 100; // IDs for dynamically added items
+
+function toggleDbEdit() {
+  dbEditActive = !dbEditActive;
+  const secBody = document.querySelector('#section-infra .sec-body');
+  const btn = document.getElementById('db-edit-toggle');
+  const gchatBtn = document.getElementById('gchat-send-btn');
+  if (dbEditActive) {
+    secBody.classList.add('db-edit-active');
+    btn.classList.add('active');
+    btn.textContent = 'Done Editing';
+    document.getElementById('add-critical-row').style.display = 'flex';
+    document.getElementById('add-health-row').style.display = 'flex';
+    gchatBtn.disabled = true;
+    gchatBtn.style.opacity = '0.5';
+    gchatBtn.style.cursor = 'not-allowed';
+  } else {
+    secBody.classList.remove('db-edit-active');
+    btn.classList.remove('active');
+    btn.textContent = 'Edit Items';
+    document.getElementById('add-critical-row').style.display = 'none';
+    document.getElementById('add-health-row').style.display = 'none';
+    renumberItems('critical-items-container', 'Critical Report');
+    renumberItems('health-items-container', 'Health Check');
+    gchatBtn.disabled = false;
+    gchatBtn.style.opacity = '1';
+    gchatBtn.style.cursor = 'pointer';
+  }
+}
+
+/* Sync the visible label text when user types in the edit input */
+function syncItemLabel(input, _unused) {
+  const qlabel = input.closest('.qlabel');
+  const textSpan = qlabel.querySelector('.item-label-text');
+  // Find numbering prefix by looking at current text
+  const currentText = textSpan.textContent;
+  const numMatch = currentText.match(/^(\d+\.\s)/);
+  const prefix = numMatch ? numMatch[1] : '';
+  textSpan.textContent = prefix + input.value;
+}
+
+/* Renumber all items in a container after add/remove */
+function renumberItems(containerId, _type) {
+  const items = document.querySelectorAll(`#${containerId} .qrow`);
+  items.forEach((row, i) => {
+    const textSpan = row.querySelector('.item-label-text');
+    const input = row.querySelector('.item-label-input');
+    if (textSpan && input) {
+      textSpan.textContent = `${i + 1}. ${input.value}`;
+    }
+  });
+}
+
+/* Remove an item row */
+function removeDbItem(rowId, _name, section) {
+  const row = document.getElementById(rowId);
+  if (!row) return;
+  const container = section === 'critical' ? 'critical-items-container' : 'health-items-container';
+  row.remove();
+  renumberItems(container, section);
+}
+
+/* Add a new item to a subsection */
+function addDbItem(section) {
+  const inputId = `add-${section}-input`;
+  const nameInput = document.getElementById(inputId);
+  const name = nameInput.value.trim();
+  if (!name) { nameInput.focus(); return; }
+
+  const containerId = section === 'critical' ? 'critical-items-container' : 'health-items-container';
+  const container = document.getElementById(containerId);
+  const itemCount = container.querySelectorAll('.qrow').length + 1;
+  const uid = `dyn${++customItemCounter}`;
+
+  /* Determine radio options */
+  let radioHTML = '';
+  let placeholder = `Notes for ${name}`;
+
+  if (section === 'critical') {
+    radioHTML = `
+      <label><input type="radio" name="${uid}" value="sched|Scheduled" checked> Scheduled</label>
+      <label><input type="radio" name="${uid}" value="prog|In-Progress"> In-Progress</label>
+      <label><input type="radio" name="${uid}" value="ok|Completed"> Completed</label>`;
+  } else {
+    const typeEl = document.getElementById('add-health-type');
+    const typeVal = typeEl ? typeEl.value : 'health-ok-alert';
+    if (typeVal === 'health-success-fail') {
+      radioHTML = `
+        <label><input type="radio" name="${uid}" value="ok|Successful" checked> Successful</label>
+        <label><input type="radio" name="${uid}" value="err|Failed"> Failed</label>`;
+    } else if (typeVal === 'health-no-open') {
+      radioHTML = `
+        <label><input type="radio" name="${uid}" value="ok|No Open Issues" checked> No Open Issues</label>
+        <label><input type="radio" name="${uid}" value="err|Open Issues Exist"> Open Issues Exist</label>`;
+    } else {
+      radioHTML = `
+        <label><input type="radio" name="${uid}" value="ok|Healthy" checked> Healthy</label>
+        <label><input type="radio" name="${uid}" value="err|With Alert"> With Alert</label>`;
+    }
+  }
+
+  const div = document.createElement('div');
+  div.className = 'qrow';
+  div.id = `qrow-${uid}`;
+  div.dataset.section = section;
+  div.innerHTML = `
+    <div class="qlabel">
+      <span class="item-label-text">${itemCount}. ${name}</span>
+      <input class="item-label-input" value="${name}" oninput="syncItemLabel(this)">
+      <button class="item-remove-btn" onclick="removeDbItem('qrow-${uid}','${uid}','${section}')">✕ Remove</button>
+    </div>
+    <div class="radio-group">${radioHTML}</div>
+    <div class="detail-row" id="${uid}-d">
+      <textarea rows="2" id="${uid}-t" placeholder="${placeholder}"></textarea>
+    </div>`;
+
+  container.appendChild(div);
+
+  /* Wire up detail toggle for new item */
+  const triggers = section === 'critical' ? ['prog','sched'] : ['err'];
+  div.querySelectorAll(`input[name="${uid}"]`).forEach(r => {
+    r.addEventListener('change', function() {
+      const lvl = this.value.split('|')[0];
+      document.getElementById(`${uid}-d`).style.display =
+        triggers.includes(lvl) ? 'flex' : 'none';
+    });
+  });
+
+  nameInput.value = '';
+  nameInput.focus();
+}
+
+/* ══════════════════════════════════════
    BUILD: INFRA GChat message (Database)
+   Reads all items dynamically from DOM
 ══════════════════════════════════════ */
 function buildInfraGChat() {
-  if (!rv('db1')) {
-    alert('Please fill in the Database section before generating.');
-    return null;
-  }
   const date = tv('rdate') || now.toISOString().split('T')[0];
   const time = tv('rtime');
-
-  const db1 = parse(rv('db1')), db2 = parse(rv('db2'));
-  const db3 = parse(rv('db3')), db4 = parse(rv('db4'));
-  const db5 = parse(rv('db5')), db6 = parse(rv('db6'));
-  const db7 = parse(rv('db7')), db8 = parse(rv('db8'));
-  const db9 = parse(rv('db9')), db10 = parse(rv('db10'));
-  const db11 = parse(rv('db11')), db12 = parse(rv('db12'));
   const dbSS = sv('db-screenshot') === 'yes';
 
   const statusIcon = (lvl) =>
     lvl === 'ok' ? '✅' : lvl === 'err' ? '🔴' : lvl === 'prog' ? '🔄' : '🕐';
+  const isDbIssue  = (lvl) => lvl === 'err';
+  const isNotDone  = (lvl) => lvl === 'prog' || lvl === 'sched';
 
-  const isDbIssue = (lvl) => lvl === 'err';
-  const isNotDone = (lvl) => lvl === 'prog' || lvl === 'sched';
+  /* Collect all items from a container */
+  function collectItems(containerId) {
+    const rows = document.querySelectorAll(`#${containerId} .qrow`);
+    return Array.from(rows).map(row => {
+      const labelInput = row.querySelector('.item-label-input');
+      const labelText  = row.querySelector('.item-label-text');
+      const label = labelInput ? labelInput.value.trim() : labelText?.textContent.replace(/^\d+\.\s*/, '').trim() || '(unnamed)';
+      // Find which radio is checked
+      const radios = row.querySelectorAll('input[type=radio]');
+      let parsedVal = { lvl: 'ok', label: 'Not reported' };
+      radios.forEach(r => { if (r.checked) parsedVal = parse(r.value); });
+      // Notes textarea — id ends in '-t'
+      const textarea = row.querySelector('textarea');
+      const note = textarea ? textarea.value.trim() : '';
+      return { label, parsed: parsedVal, note };
+    });
+  }
 
-  const anyIssue = [db1,db2,db3,db4,db5,db6,db7,db8,db9,db10,db11,db12].some(v => isDbIssue(v.lvl));
-  const anyPending = [db1,db2,db3,db4,db5,db6].some(v => isNotDone(v.lvl));
+  const criticalItems = collectItems('critical-items-container');
+  const healthItems   = collectItems('health-items-container');
+  const allItems      = [...criticalItems, ...healthItems];
 
-  const dbLine = (label, parsed, noteId) => {
-    const ico = statusIcon(parsed.lvl);
-    let s = `${ico} *${label}* — ${parsed.label}\n`;
-    const note = tv(noteId);
-    if (note) s += `   ↳ ${note}\n`;
+  const anyIssue   = allItems.some(i => isDbIssue(i.parsed.lvl));
+  const anyPending = criticalItems.some(i => isNotDone(i.parsed.lvl));
+
+  const dbLine = (item) => {
+    let s = `${statusIcon(item.parsed.lvl)} *${item.label}* — ${item.parsed.label}\n`;
+    if (item.note) s += `   ↳ ${item.note}\n`;
     return s;
   };
 
- 
   let msg = `EDS L1 Monitoring Health Checks ${date}${time ? ' at ' + time : ''}\n`;
   msg += `\n`;
   msg += `━━━━━━━━━━━━━━━━━━━━━━━━\n`;
   msg += `*CRITICAL REPORTS STATUS*\n`;
   msg += `━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-  msg += dbLine('ADH Batch 1',  db1, 'db1-t');
-  msg += dbLine('IN Summary',   db2, 'db2-t');
-  msg += dbLine('New Delphi',   db3, 'db3-t');
-  msg += dbLine('CWN Status',   db4, 'db4-t');
-  msg += dbLine('VOC RDL Field Engineer', db5, 'db5-t');
-  msg += dbLine('Revenue Accounting Monthly Report (Day 1)', db6, 'db6-t');
+  criticalItems.forEach(item => { msg += dbLine(item); });
   msg += `\n`;
   msg += `━━━━━━━━━━━━━━━━━━━━━━━━\n`;
   msg += `*HEALTH CHECKS*\n`;
   msg += `━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-  msg += dbLine('Snowflake Table Refresh', db7, 'db7-t');
-  msg += dbLine('Kafka Topics', db8, 'db8-t');
-  msg += dbLine('Kafka CDP Infra Monitoring', db9, 'db9-t');
-  msg += dbLine('Compute Infra Monitoring', db10, 'db10-t');
-  msg += dbLine('ADH CDC Status', db11, 'db11-t');
-  msg += dbLine('Open Issues', db12, 'db12-t');
+  healthItems.forEach(item => { msg += dbLine(item); });
   msg += `━━━━━━━━━━━━━━━━━━━━━━━━\n`;
 
   if (anyIssue)        msg += `*OVERALL: 🔴 Issues detected. Please review.*\n`;
@@ -510,6 +644,130 @@ function doCopy() {
   });
 }
 
+/* ── RESTORE DEFAULT DB ITEMS ── */
+function restoreDefaultDbItems() {
+  const criticalDefaults = [
+    { id: 'db1', label: 'ADH Batch 1' },
+    { id: 'db2', label: 'IN Summary' },
+    { id: 'db3', label: 'New Delphi' },
+    { id: 'db4', label: 'CWN Status' },
+    { id: 'db5', label: 'VOC RDL Field Engineer' },
+    { id: 'db6', label: 'Revenue Accounting Monthly Report (Day 1)' }
+  ];
+
+  const healthDefaults = [
+    { id: 'db7', label: 'Snowflake Table Refresh' },
+    { id: 'db8', label: 'Kafka Topics' },
+    { id: 'db9', label: 'Kafka CDP Infra Monitoring' },
+    { id: 'db10', label: 'Compute Infra Monitoring' },
+    { id: 'db11', label: 'ADH CDC Status' },
+    { id: 'db12', label: 'Open Issues' }
+  ];
+
+  /* Restore critical items */
+  const criticalContainer = document.getElementById('critical-items-container');
+  criticalDefaults.forEach((item, idx) => {
+    let row = document.getElementById(`qrow-${item.id}`);
+    if (!row) {
+      const div = document.createElement('div');
+      div.className = 'qrow';
+      div.id = `qrow-${item.id}`;
+      div.dataset.section = 'critical';
+      div.innerHTML = `
+        <div class="qlabel">
+          <span class="item-label-text">${idx + 1}. ${item.label}</span>
+          <input class="item-label-input" value="${item.label}" oninput="syncItemLabel(this,'${item.id}-label-text')">
+          <button class="item-remove-btn" onclick="removeDbItem('qrow-${item.id}','${item.id}','critical')">✕ Remove</button>
+        </div>
+        <div class="radio-group">
+          <label><input type="radio" name="${item.id}" value="sched|Scheduled" checked> Scheduled</label>
+          <label><input type="radio" name="${item.id}" value="prog|In-Progress"> In-Progress</label>
+          <label><input type="radio" name="${item.id}" value="ok|Completed"> Completed</label>
+        </div>
+        <div class="detail-row" id="${item.id}-d">
+          <textarea rows="2" id="${item.id}-t" placeholder="Additional notes for ${item.label} (e.g. delayed, error encountered)"></textarea>
+        </div>`;
+      criticalContainer.appendChild(div);
+      /* Wire up detail toggle for restored item */
+      div.querySelectorAll(`input[name="${item.id}"]`).forEach(r => {
+        r.addEventListener('change', function () {
+          const detail = document.getElementById(item.id + '-d');
+          if (detail) detail.style.display = this.checked && ['prog','sched'].includes(this.value.split('|')[0]) ? 'flex' : 'none';
+        });
+      });
+    } else {
+      /* Reset existing item to default state */
+      row.querySelector('input[value="sched|Scheduled"]').checked = true;
+      const textarea = row.querySelector('textarea');
+      if (textarea) textarea.value = '';
+      const detailRow = row.querySelector('.detail-row');
+      if (detailRow) detailRow.style.display = 'none';
+    }
+  });
+
+  /* Restore health items */
+  const healthContainer = document.getElementById('health-items-container');
+  const healthRadios = [
+    { id: 'db7', options: [['ok|Successful', 'Successful'], ['err|Failed', 'Failed']] },
+    { id: 'db8', options: [['ok|Healthy', 'Healthy'], ['err|With Alert', 'With Alert']] },
+    { id: 'db9', options: [['ok|Healthy', 'Healthy'], ['err|With Alert', 'With Alert']] },
+    { id: 'db10', options: [['ok|Healthy', 'Healthy'], ['err|With Alert', 'With Alert']] },
+    { id: 'db11', options: [['ok|Healthy', 'Healthy'], ['err|With Alert', 'With Alert']] },
+    { id: 'db12', options: [['ok|No Open Issues', 'No Open Issues'], ['err|Open Issues Exist', 'Open Issues Exist']] }
+  ];
+
+  healthDefaults.forEach((item, idx) => {
+    let row = document.getElementById(`qrow-${item.id}`);
+    if (!row) {
+      const radioConfig = healthRadios[idx];
+      let radioHTML = '';
+      radioConfig.options.forEach(([val, label]) => {
+        const checked = val.startsWith('ok') ? 'checked' : '';
+        radioHTML += `<label><input type="radio" name="${item.id}" value="${val}" ${checked}> ${label}</label>`;
+      });
+
+      const placeholders = {
+        db7: 'Which table(s) failed to refresh? Error message or time of failure?',
+        db8: 'Which topics have issues? Describe the problem.',
+        db9: 'Describe any anomalies or concerns.',
+        db10: 'Describe any infrastructure issues.',
+        db11: 'Describe the alert details.',
+        db12: 'List any open issues and their status.'
+      };
+
+      const div = document.createElement('div');
+      div.className = 'qrow';
+      div.id = `qrow-${item.id}`;
+      div.dataset.section = 'health';
+      div.innerHTML = `
+        <div class="qlabel">
+          <span class="item-label-text">${idx + 1}. ${item.label}</span>
+          <input class="item-label-input" value="${item.label}">
+          <button class="item-remove-btn" onclick="removeDbItem('qrow-${item.id}','${item.id}','health')">✕ Remove</button>
+        </div>
+        <div class="radio-group">${radioHTML}</div>
+        <div class="detail-row" id="${item.id}-d">
+          <textarea rows="2" id="${item.id}-t" placeholder="${placeholders[item.id]}"></textarea>
+        </div>`;
+      healthContainer.appendChild(div);
+      /* Wire up detail toggle for restored item */
+      div.querySelectorAll(`input[name="${item.id}"]`).forEach(r => {
+        r.addEventListener('change', function () {
+          const detail = document.getElementById(item.id + '-d');
+          if (detail) detail.style.display = this.checked && this.value.split('|')[0] === 'err' ? 'flex' : 'none';
+        });
+      });
+    } else {
+      /* Reset existing item to default state */
+      row.querySelector('input[value^="ok"]').checked = true;
+      const textarea = row.querySelector('textarea');
+      if (textarea) textarea.value = '';
+      const detailRow = row.querySelector('.detail-row');
+      if (detailRow) detailRow.style.display = 'none';
+    }
+  });
+}
+
 /* ── RESET ── */
 function resetAll() {
   document.querySelectorAll('input[type=radio]').forEach(r => { r.checked = r.defaultChecked; });
@@ -521,10 +779,23 @@ function resetAll() {
   document.getElementById('partner-recipient-preview').textContent = '';
   document.getElementById('wakanda-recipients-preview').textContent = 'Wakanda · MYNT';
 
+  /* Exit edit mode if active */
+  if (dbEditActive) { toggleDbEdit(); }
+
+  /* Restore default DB items and remove any dynamic items */
+  restoreDefaultDbItems();
+  document.querySelectorAll('#critical-items-container .qrow[id^="qrow-dyn"]').forEach(r => r.remove());
+  document.querySelectorAll('#health-items-container .qrow[id^="qrow-dyn"]').forEach(r => r.remove());
+  renumberItems('critical-items-container', 'critical');
+  renumberItems('health-items-container', 'health');
+
   ['af','gw','db','ap'].forEach(sec => {
-    document.getElementById(sec + '-screenshot').value = 'no';
-    document.getElementById(sec + '-ss-no').classList.add('active');
-    document.getElementById(sec + '-ss-yes').classList.remove('active');
+    const noBtn = document.getElementById(sec + '-ss-no');
+    const yesBtn = document.getElementById(sec + '-ss-yes');
+    const val = document.getElementById(sec + '-screenshot');
+    if (val) val.value = 'no';
+    if (noBtn) noBtn.classList.add('active');
+    if (yesBtn) yesBtn.classList.remove('active');
   });
 
   isTimeLive = true;
