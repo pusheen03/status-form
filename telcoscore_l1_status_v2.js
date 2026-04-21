@@ -1,7 +1,7 @@
 /* ── GCHAT CONFIG ── */
 const GCHAT = {
-  webhook : 'https://chat.googleapis.com/v1/spaces/AAAAj7UKkRU/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=pMhHx51QSXmtGMjqL9KaVz0h3hUn-DblyYCGWE8iISo',
-  spaceUrl: 'https://chat.google.com/app/chat/AAAAj7UKkRU',
+  webhook : 'https://chat.googleapis.com/v1/spaces/AAQAos2lyw8/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=YRRGulOMHa--v35bF0PC0U9d2Z6shF5b4DRwrq9VYsY',
+  spaceUrl: 'https://mail.google.com/mail/u/0/?tab=rm&ogbl#chat/space/AAQAos2lyw8',
 };
 
 /* ── EMAILS / DOMAINS (update these to real addresses) ── */
@@ -177,7 +177,7 @@ function buildPlatformEmail() {
   body += `══════════════════════════════════════════════\n\n`;
   body += `Kindly acknowledge receipt of this report.\n`;
   if (anyIssue) body += `Please coordinate on the flagged items above.\n`;
-  body += `\nThank you,\nL1 Support — TelcoScore / EDS MS`;
+  body += `\nThank you,\nL1 Support — EDS MS`;
 
   return { subject, body, to: EMAILS.platform, cc: '' };
 }
@@ -376,13 +376,13 @@ function buildInfraGChat() {
   healthItems.forEach(item => { msg += dbLine(item); });
   msg += `━━━━━━━━━━━━━━━━━━━━━━━━\n`;
 
-  if (anyIssue)        msg += `*OVERALL: 🔴 Issues detected. Please review.*\n`;
+  if (anyIssue)        msg += `*OVERALL: 🔴 Issues detected.*\n`;
   else if (anyPending) msg += `*OVERALL: 🔄 Some items still in progress or scheduled.*\n`;
   else                 msg += `*OVERALL: ✅ All items completed. No issues.*\n`;
 
   msg += `━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-  if (anyIssue) msg += `\nPlease coordinate on the flagged items above.`;
-  msg += `\n\n— L1 Support, TelcoScore / EDS MS`;
+  if (anyIssue) msg += `\nFYI on the flagged items above.`;
+  msg += `\n\n— L1 Support, EDS MS`;
 
   return { msg, anyIssue, anyPending };
 }
@@ -478,7 +478,7 @@ function buildWakandaEmail() {
   body += `══════════════════════════════════════════════\n\n`;
   body += `Kindly acknowledge receipt of this report.\n`;
   if (anyIssue) body += `Please coordinate with the respective PICs on flagged items. Wakanda team to review Section 2 items.\n`;
-  body += `\nThank you,\nL1 Support — TelcoScore / EDS MS`;
+  body += `\nThank you,\nL1 Support — EDS MS`;
 
   return { subject, body, to: EMAILS.wakanda, cc };
 }
