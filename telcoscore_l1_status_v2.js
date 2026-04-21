@@ -278,8 +278,8 @@ function addDbItem(section) {
         <label><input type="radio" name="${uid}" value="err|Failed"> Failed</label>`;
     } else if (typeVal === 'health-no-open') {
       radioHTML = `
-        <label><input type="radio" name="${uid}" value="ok|No Open Issues" checked> No Open Issues</label>
-        <label><input type="radio" name="${uid}" value="err|Open Issues Exist"> Open Issues Exist</label>`;
+        <label><input type="radio" name="${uid}" value="ok|No Open Issue" checked> No Open Issue</label>
+        <label><input type="radio" name="${uid}" value="err|Open Issue"> Open Issue</label>`;
     } else {
       radioHTML = `
         <label><input type="radio" name="${uid}" value="ok|Healthy" checked> Healthy</label>
@@ -381,7 +381,6 @@ function buildInfraGChat() {
   else                 msg += `*OVERALL: ✅ All items completed. No issues.*\n`;
 
   msg += `━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-  msg += `\nKindly acknowledge receipt of this report.`;
   if (anyIssue) msg += `\nPlease coordinate on the flagged items above.`;
   msg += `\n\n— L1 Support, TelcoScore / EDS MS`;
 
@@ -661,7 +660,7 @@ function restoreDefaultDbItems() {
     { id: 'db9', label: 'Kafka CDP Infra Monitoring' },
     { id: 'db10', label: 'Compute Infra Monitoring' },
     { id: 'db11', label: 'ADH CDC Status' },
-    { id: 'db12', label: 'Open Issues' }
+    { id: 'db12', label: 'Other Open Issue' }
   ];
 
   /* Restore critical items */
@@ -713,7 +712,7 @@ function restoreDefaultDbItems() {
     { id: 'db9', options: [['ok|Healthy', 'Healthy'], ['err|With Alert', 'With Alert']] },
     { id: 'db10', options: [['ok|Healthy', 'Healthy'], ['err|With Alert', 'With Alert']] },
     { id: 'db11', options: [['ok|Healthy', 'Healthy'], ['err|With Alert', 'With Alert']] },
-    { id: 'db12', options: [['ok|No Open Issues', 'No Open Issues'], ['err|Open Issues Exist', 'Open Issues Exist']] }
+    { id: 'db12', options: [['ok|No Open Issue', 'No Open Issue'], ['err|Open Issue', 'Open Issue']] }
   ];
 
   healthDefaults.forEach((item, idx) => {

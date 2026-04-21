@@ -260,13 +260,13 @@
 
       <div class="qrow" id="qrow-db12" data-section="health">
         <div class="qlabel">
-          <span class="item-label-text">6. Open Issues</span>
-          <input class="item-label-input" value="Open Issues">
+          <span class="item-label-text">6. Other Open Issue</span>
+          <input class="item-label-input" value="Other Open Issue">
           <button class="item-remove-btn" onclick="removeDbItem('qrow-db12','db12','health')">✕ Remove</button>
         </div>
         <div class="radio-group">
-          <label><input type="radio" name="db12" value="ok|No Open Issues" checked> No Open Issues</label>
-          <label><input type="radio" name="db12" value="err|Open Issues Exist"> Open Issues Exist</label>
+          <label><input type="radio" name="db12" value="ok|No Open Issue" checked> No Open Issue</label>
+          <label><input type="radio" name="db12" value="err|Open Issue"> Open Issue</label>
         </div>
         <div class="detail-row" id="db12-d">
           <textarea rows="2" id="db12-t" placeholder="List any open issues and their status."></textarea>
@@ -281,7 +281,7 @@
         <select class="db-add-type" id="add-health-type">
           <option value="health-ok-alert">Healthy / With Alert</option>
           <option value="health-success-fail">Successful / Failed</option>
-          <option value="health-no-open">No Open Issues / Open Issues Exist</option>
+          <option value="health-no-open">No Open Issue / Open Issue</option>
         </select>
         <button class="db-add-btn" onclick="addDbItem('health')">+ Add Item</button>
       </div>
