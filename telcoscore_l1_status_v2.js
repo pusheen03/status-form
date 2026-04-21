@@ -1,7 +1,7 @@
 /* ── GCHAT CONFIG ── */
 const GCHAT = {
-  webhook : 'https://chat.googleapis.com/v1/spaces/AAQAos2lyw8/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=YRRGulOMHa--v35bF0PC0U9d2Z6shF5b4DRwrq9VYsY',
-  spaceUrl: 'https://mail.google.com/mail/u/0/?tab=rm&ogbl#chat/space/AAQAos2lyw8',
+  webhook : 'https://chat.googleapis.com/v1/spaces/AAAAj7UKkRU/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=pMhHx51QSXmtGMjqL9KaVz0h3hUn-DblyYCGWE8iISo',
+  spaceUrl: 'https://chat.google.com/app/chat/AAAAj7UKkRU',
 };
 
 /* ── EMAILS / DOMAINS (update these to real addresses) ── */
